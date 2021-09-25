@@ -8,5 +8,17 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "prettier": "2.4.1"
+  },
+  "prettier": {
+    "tabWidth": 4,
+    "useTabs": true,
+    "singleQuote": true,
+    "bracketSpacing": false
+  }
 }
