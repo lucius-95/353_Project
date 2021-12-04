@@ -1,0 +1,66 @@
+{
+  "name": "cmpt353team",
+  "version": "1.0.0",
+  "description": "This project is for CMPT 353",
+  "main": "server.js",
+  "scripts": {
+    "lint": "eslint ./",
+    "lint-fix": "eslint ./ --fix",
+    "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
+    "docker-start": "node server.js",
+    "client-install": "npm install  --prefix \"../client\"",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix \"../client\"",
+    "dev": "concurrently \"npm run client-install\" \"npm install\" \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eroscupid88/CMPT353_project.git"
+  },
+  "keywords": [
+    "GOODLUCK",
+    "everyone"
+  ],
+  "author": "Dillon Vu, Lucius Ho, Kyle",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eroscupid88/CMPT353_project/issues"
+  },
+  "homepage": "https://github.com/eroscupid88/CMPT353_project#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1029.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "concurrently": "^6.3.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "custom-env": "2.0.1",
+    "eureka-js-client": "^4.5.0",
+    "express": "^4.17.1",
+    "is-typedarray": "^1.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "log4js": "^6.3.0",
+    "mongoose": "^6.0.10",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.3",
+    "multer-s3": "^2.10.0",
+    "mysql": "^2.18.1",
+    "passport": "^0.5.0",
+    "passport-jwt": "^4.0.0",
+    "password-validator": "^5.2.0",
+    "request": "^2.88.2",
+    "semver": "^7.3.5",
+    "validator": "^13.6.0"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-node": "^2.0.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "eslint-plugin-react": "^7.25.1",
+    "eslint-plugin-react-hooks": "^4.2.0"
+  }
+}

@@ -1,0 +1,25 @@
+.welcome-bg {
+  background-image: url("https://wallpapercave.com/wp/wp2035807.jpg");
+  background-size: cover;
+  background-position: right;
+}
+.welcome-bg h1 {
+  font-family: "Times New Roman", serif;
+  color: black;
+  text-shadow: 3px 3px 5px dimgrey, 3px 3px 10px dimgrey;
+}
+
+.dashboard-button {
+  right: auto;
+  left: 0;
+}
+
+.user-link {
+  font-size: x-large;
+  margin: 0;
+  text-shadow: 1px -1px 2px skyblue, 1px -1px 2.5px skyblue;
+}
+
+.user-link:hover {
+  text-decoration: underline;
+}

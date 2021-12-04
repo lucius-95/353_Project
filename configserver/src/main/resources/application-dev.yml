@@ -1,0 +1,18 @@
+# dev environment running on github configs repository
+server:
+  port: 8082
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          default-label: main
+          uri: https://github.com/eroscupid88/cmpt353_config
+          searchPaths: gateway-server*,eureka-server*
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

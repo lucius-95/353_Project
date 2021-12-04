@@ -1,0 +1,233 @@
+version: '3.9'
+
+services:
+  #db
+  mongodb:
+    image: mongo:latest
+    container_name: CMPT353_mongodb
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - db:/data/db/
+      - ./server/mongo-init/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      MONGO_INITDB_DATABASE: cmpt353db
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+    networks:
+      app:
+        aliases:
+          - mongo
+  mongo-express:
+    image: mongo-express
+    container_name: CMPT353_mongo-express
+    restart: always
+    ports:
+      - 8089:8089
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017/
+    networks:
+      app:
+        aliases:
+          - mongo-express
+
+
+  # team members
+  mysql:
+    image: mysql:latest
+    container_name: cpmt353_project_team
+    restart: always
+    ports:
+      - 3307:3306
+    volumes:
+      - ./server/mysql-init/team-init.sql:/docker-entrypoint-initdb.d/team-init.sql
+      - team-db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: project
+      MYSQL_DATABASE: team
+    networks:
+      app:
+        aliases:
+          - mysql
+  client:
+    build: ./client
+    image: node_client:latest
+      # set container name
+    container_name: CMPT353_client
+    depends_on:
+      - mongodb
+      - mysql
+      - user-server
+      #set environment
+    environment:
+      NODE_ENV: dev
+      SERVER: user-server
+      # The location of dockerfile to build this service
+    ports:
+      - 3000:3000
+    stdin_open: true
+    networks:
+      app:
+        aliases:
+          - 'client'
+#  # #server
+  user-server:
+    build: ./server
+    image: node_server:alpine
+     # set container name
+    container_name: CMPT353_server
+    depends_on:
+      - mongodb
+      - mysql
+     #set environment
+    stdin_open: true
+    tty: true
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: eurekaserver
+      NODE_ENV: dev
+      MONGODB: mongodb
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+     # Ports to map, mapping our port 8080, to the port 8080 on the container
+    ports:
+      - 8080:8080
+    networks:
+      app:
+        aliases:
+         - 'user-server'
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    depends_on:
+      - elasticsearch
+    environment:
+      - STORAGE_TYPE=elasticsearch
+      - "ES_HOSTS=elasticsearch:9300"
+    ports:
+      - "9411:9411"
+    networks:
+      app:
+        aliases:
+          - "zipkin"
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - my-db:/usr/share/elasticsearch/data
+    ports:
+      #       Cluster communication
+      - "9300:9300"
+      #       REST communication
+      - "9200:9200"
+    networks:
+      app:
+        aliases:
+          - "elasticsearch"
+  kibana:
+    image: elastic/kibana:7.7.0
+    container_name: kibana
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9300"
+    ports:
+      - "5601:5601"
+    networks:
+      app:
+        aliases:
+          - "kibana"
+  logstash:
+    image: elastic/logstash:7.7.0
+    container_name: logstash
+    command: logstash -f /etc/logstash/conf.d/logstash.conf
+    volumes:
+      - ./ELK-stack-config/config:/etc/logstash/conf.d
+    ports:
+      - "6000:6000"
+    networks:
+      app:
+        aliases:
+          - "logstash"
+  configserver:
+    build: ./configserver
+    image: configserver:latest
+    container_name: configServer
+    environment:
+      PROFILE: "dev"
+    ports:
+      - "8082:8082"
+    networks:
+      app:
+        aliases:
+          - "configserver"
+  eurekaserver:
+    build: ./eureka-server
+    image: eurekaserver:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    container_name: eurekaServer
+    ports:
+      - "8081:8081"
+    environment:
+      configserver: configserver
+    depends_on:
+      - mongodb
+      - mysql
+      - configserver
+    networks:
+      app:
+        aliases:
+          - "eurekaserver"
+  gatewayserver:
+    build: ./gateway-server
+    image: gatewayserver:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    container_name: gatewayServer
+    ports:
+      - "7072:7072"
+    environment:
+      PROFILE: "dev"
+      SERVER_PORT: "7072"
+      LOGSTASH: logstash
+      CONFIGSERVER_URI: configserver
+      EUREKASERVER_URI: http://eurekaserver:8081/eureka/
+      EUREKASERVER_PORT: "8081"
+      CONFIGSERVER_PORT: "8082"
+    depends_on:
+      - mongodb
+      - mysql
+      - configserver
+      - eurekaserver
+    networks:
+      app:
+        aliases:
+          - "gatewayserver"
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  my-db:
+    driver: local
+  db:
+    driver: local
+  team-db:
+    driver: local

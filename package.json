@@ -1,24 +1,7 @@
 {
-  "name": "353_project",
+  "name": "CMPT353Team",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.17.1"
-  },
   "devDependencies": {
-    "prettier": "2.4.1"
-  },
-  "prettier": {
-    "tabWidth": 4,
-    "useTabs": true,
-    "singleQuote": true,
-    "bracketSpacing": false
+    "redux-form": "^8.3.7"
   }
 }
