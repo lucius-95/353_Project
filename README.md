@@ -44,13 +44,13 @@ brew install maven
 docker-compose up
 
 # To run on client side run on:
-http://locahost:3000
+http://localhost:3000
 
 ## side server with back end monitoring:
 # eureka server:
-http://locahost:8081
+http://localhost:8081
 # configuration server
-http://locahost:8082
+http://localhost:8082
 
 # gateway API call 
 http://localhost:7072/actuator/gateway/routes
@@ -63,9 +63,3 @@ http://localhost:5601/app/kibana
 # reset the server if it not working!
 # if an error show up for java file , run :
  mvn clean package
-
-
-
-
-
-
